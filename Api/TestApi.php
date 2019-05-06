@@ -8,6 +8,7 @@ use Core\BaseRequestData;
 use Core\BaseResponseData;
 use Core\Request;
 use Core\Response;
+use Model\CommodityClass;
 
 
 class TestApiRequest extends BaseRequestData
@@ -37,6 +38,8 @@ class TestApi extends BaseAPI
 
         }
 
-        $response->data->data = 123;
+        $comm_class = new CommodityClass($rqData->id);
+        $data = $comm_class->findOne();
+        $response->data->data = $data;
     }
 }
