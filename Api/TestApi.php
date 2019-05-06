@@ -3,6 +3,9 @@
 namespace Api;
 
 
+use Core\BaseAPI;
+use Core\BaseRequestData;
+use Core\BaseResponseData;
 use Core\Request;
 use Core\Response;
 

@@ -1,10 +1,7 @@
 <?php
 
-namespace Api;
+namespace Core;
 
-use Core\JsonAPI;
-use Core\Request;
-use Core\Response;
 
 class ErrorCode
 {
@@ -18,22 +15,6 @@ class ErrorCode
     const IS_ALREADY = 504;
     const NOT_FOUND = 404;
     const REDIRECT = 302;
-}
-
-class BaseRequestData
-{
-    public $token;
-    public $authority;
-}
-
-class BaseResponseData
-{
-    public $code;
-
-    public function __construct()
-    {
-        $this->code = ErrorCode::SUC;
-    }
 }
 
 class BaseResponseErrorData extends BaseResponseData
