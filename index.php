@@ -14,32 +14,23 @@ class Index
 {
     public static function main(): void
     {
-        /// 设置时区
-        self::setTimezone();
-
-        // 设置错误日志
-        self::setErrorLog();
-
-        // 设置目录常量
-        self::setDIR();
-
-        spl_autoload_register('self::loadLog');
-        spl_autoload_register('self::loadCore');
-
-        if (!Logger::hasSetConcreteLogger()) {
-            require_once('E:\ChromeDownload\apache-log4php-2.3.0-src\apache-log4php-2.3.0\src\main\php/Logger.php');
-            Logger::setConcreteLogger(new Log4php());
-        }
+        // 加载api model类文件
+        self::autoload();
 
         $response = new Response();
         unset($response->data);
         try {
+            // 引入日志文件
+            if (!Logger::hasSetConcreteLogger()) {
+                require_once('E:\ChromeDownload\apache-log4php-2.3.0-src\apache-log4php-2.3.0\src\main\php/Logger.php');
+                Logger::setConcreteLogger(new Log4php());
+            }
+
             // ----- request -----
             $request = new Request();
             Logger::getInstance()->setRequest($request);
 
             $request->api = explode('?', $_SERVER["REQUEST_URI"]);
-
             $api = explode('/', $request->api[0]);
             if (count($api) > 0 && $api[0] === '') {
                 $api = array_pop($api);
@@ -48,26 +39,17 @@ class Index
             $request->data = file_get_contents('php://input');
             $request->httpHeaders = $_SERVER;
 
+            // 日志 start
             Logger::getInstance()->info('start');
 
-            // 加载api类文件
-            // self::loadApi($request, $response);
-            self::autoload();
             $class = 'Api\\' . $api;
             $api = new $class;
             $api->process($request, $response);
-
-
-            /*if (!class_exists($api)) {
-                $response->httpStatus = HttpStatus::NOT_FOUND;
-                $response->httpStatusMsg = "API Not Found";
-            } else {
-                $api = new $api;
-                $api->process($request, $response);
-            }*/
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $response->httpStatus = HttpStatus::FAILED;
             $response->httpStatusMsg = $e->getMessage();
+
+            // 日志 end
             Logger::getInstance()->fatal("500 PHP Run Error", $e);
 
         }
@@ -113,8 +95,6 @@ class Index
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
      * 加载api类文件
      */
     private static function loadApi(string $name): void
@@ -125,6 +105,9 @@ class Index
         }
     }
 
+    /**
+     * 加载 model 类文件
+     */
     private static function loadModel(string $name): void
     {
         $fileName = TY_MODEL . $name . '.php';
@@ -133,6 +116,9 @@ class Index
         }
     }
 
+    /**
+     * 设置目录常量
+     */
     private static function setDIR(): void
     {
         define('TY_API', __DIR__ . '\\Api\\');
@@ -140,9 +126,12 @@ class Index
         define('TY_CONF', __DIR__ . '\\');
         define('TY_LOG', __DIR__ . '\\');
         define('TY_CORE', __DIR__ . '\\');
-
     }
 
+    /**
+     * @param string $name
+     * 自动加载日志
+     */
     private static function loadLog(string $name): void
     {
         $fileName = TY_LOG . $name . '.inc';
@@ -151,6 +140,10 @@ class Index
         }
     }
 
+    /**
+     * @param string $name
+     * 自动加载核心类文件
+     */
     private static function loadCore(string $name): void
     {
         $fileName = TY_CORE . $name . '.php';
@@ -159,9 +152,24 @@ class Index
         }
     }
 
+    /**
+     * 自动加载 api model 类文件
+     */
     private static function autoload(): void
     {
+        // 设置时区
+        self::setTimezone();
+        // 设置错误日志
+        self::setErrorLog();
+        // 设置目录常量
+        self::setDIR();
+        // 自动加载日志
+        spl_autoload_register('self::loadLog');
+        // 自动加载核心类文件
+        spl_autoload_register('self::loadCore');
+        // 自动加载model
         spl_autoload_register('self::loadModel');
+        // 自动加载api
         spl_autoload_register('self::loadApi');
     }
 }
