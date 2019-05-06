@@ -6,15 +6,12 @@ use Core\Response;
 use Log\Log4php;
 use Log\Logger;
 
-//require_once 'Common.php';
-//require_once 'Log\Logger.inc';
-//require_once 'Log\Log4php.inc';
 
 class Index
 {
     public static function main(): void
     {
-        // 加载api model类文件
+        // 自动加载类文件
         self::autoload();
 
         $response = new Response();
@@ -22,7 +19,7 @@ class Index
         try {
             // 引入日志文件
             if (!Logger::hasSetConcreteLogger()) {
-                require_once('E:\ChromeDownload\apache-log4php-2.3.0-src\apache-log4php-2.3.0\src\main\php/Logger.php');
+                require_once(Config\Logger::log4php_class_file);
                 Logger::setConcreteLogger(new Log4php());
             }
 
@@ -49,14 +46,14 @@ class Index
             $response->httpStatus = HttpStatus::FAILED;
             $response->httpStatusMsg = $e->getMessage();
 
-            // 日志 end
             Logger::getInstance()->fatal("500 PHP Run Error", $e);
-
         }
+        // 日志 end
         Logger::getInstance()->info("end");
 
 
         if ($response->httpStatus !== HttpStatus::SUC) {
+            Logger::getInstance()->fatal($response->httpStatusMsg);
             header("HTTP/1.1 " . $response->httpStatus . " " . $response->httpStatusMsg);
             return;
         }
