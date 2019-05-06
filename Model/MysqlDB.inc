@@ -8,6 +8,7 @@
 
 namespace Model;
 
+use Log\Logger;
 use \PDO as PDO;
 
 /**

@@ -161,7 +161,6 @@ class Index
         if (file_exists($fileName)) {
             require_once $fileName;
         }
-        echo $fileName;
     }
 
     /**
