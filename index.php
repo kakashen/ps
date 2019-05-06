@@ -96,7 +96,7 @@ class Index
      */
     private static function loadApi(string $name): void
     {
-        $fileName = TY_API . $name . '.php';
+        $fileName = TY_API . basename($name) . '.php';
         if (file_exists($fileName)) {
             require_once $fileName;
         }
@@ -107,7 +107,7 @@ class Index
      */
     private static function loadModel(string $name): void
     {
-        $fileName = TY_MODEL . $name . '.php';
+        $fileName = TY_MODEL . basename($name) . '.php';
         if (file_exists($fileName)) {
             require_once $fileName;
         }
@@ -119,10 +119,10 @@ class Index
     private static function setDIR(): void
     {
         define('TY_API', __DIR__ . '\\Api\\');
-        define('TY_MODEL', __DIR__ . '\\');
+        define('TY_MODEL', __DIR__ . '\\Model\\');
         define('TY_CONF', __DIR__ . '\\Config\\');
-        define('TY_LOG', __DIR__ . '\\');
-        define('TY_CORE', __DIR__ . '\\');
+        define('TY_LOG', __DIR__ . '\\Log\\');
+        define('TY_CORE', __DIR__ . '\\Core\\');
     }
 
     /**
@@ -131,7 +131,7 @@ class Index
      */
     private static function loadLog(string $name): void
     {
-        $fileName = TY_LOG . $name . '.inc';
+        $fileName = TY_LOG . basename($name) . '.inc';
         if (file_exists($fileName)) {
             require_once $fileName;
         }
@@ -143,7 +143,7 @@ class Index
      */
     private static function loadCore(string $name): void
     {
-        $fileName = TY_CORE . $name . '.php';
+        $fileName = TY_CORE . basename($name) . '.php';
         if (file_exists($fileName)) {
             require_once $fileName;
         }
