@@ -123,7 +123,7 @@ class Index
     {
         define('TY_API', __DIR__ . '\\Api\\');
         define('TY_MODEL', __DIR__ . '\\');
-        define('TY_CONF', __DIR__ . '\\');
+        define('TY_CONF', __DIR__ . '\\Config\\');
         define('TY_LOG', __DIR__ . '\\');
         define('TY_CORE', __DIR__ . '\\');
     }
@@ -153,6 +153,18 @@ class Index
     }
 
     /**
+     * 自动加载 config
+     */
+    private static function loadConfig()
+    {
+        $fileName = TY_CONF . 'Config' . '.php';
+        if (file_exists($fileName)) {
+            require_once $fileName;
+        }
+        echo $fileName;
+    }
+
+    /**
      * 自动加载 api model 类文件
      */
     private static function autoload(): void
@@ -171,6 +183,9 @@ class Index
         spl_autoload_register('self::loadModel');
         // 自动加载api
         spl_autoload_register('self::loadApi');
+        // 自动加载 config
+        spl_autoload_register('self::loadConfig');
+
     }
 }
 
