@@ -2,38 +2,6 @@
 
 require 'Model\Medoo.php';
 
-use Model\Medoo;
-
-class Response
-{
-    public function __construct()
-    {
-        $this->httpStatus = HttpStatus::SUC;
-    }
-
-    public $data;
-    public $httpStatus;
-    public $httpStatusMsg;
-    public $httpHeaders = [];
-}
-
-class HttpStatus
-{
-    const SUC = 200;
-    const ARGS_FORMAT_ERROR = 400;
-    const NOT_FOUND = 404;
-    const ARGS_ERROR = 415;
-    const FAILED = 500;
-}
-
-class Request
-{
-    public $data;
-    public $api;
-    public $uid;
-    public $httpHeaders = [];
-}
-
 class RequestData
 {
     public $token;

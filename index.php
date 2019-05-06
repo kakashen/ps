@@ -1,25 +1,30 @@
 <?php
 
+use Core\HttpStatus;
+use Core\Request;
+use Core\Response;
 use Log\Log4php;
 use Log\Logger;
 
-require_once 'Common.php';
-require_once 'Log\Logger.inc';
-require_once 'Log\Log4php.inc';
+//require_once 'Common.php';
+//require_once 'Log\Logger.inc';
+//require_once 'Log\Log4php.inc';
 
 class Index
 {
     public static function main(): void
     {
-        /*
-         * 设置时区
-         */
+        /// 设置时区
         self::setTimezone();
-        /*
-         * 设置错误日志
-         */
+
+        // 设置错误日志
         self::setErrorLog();
 
+        // 设置目录常量
+        self::setDIR();
+
+        spl_autoload_register('self::loadLog');
+        spl_autoload_register('self::loadCore');
 
         if (!Logger::hasSetConcreteLogger()) {
             require_once('E:\ChromeDownload\apache-log4php-2.3.0-src\apache-log4php-2.3.0\src\main\php/Logger.php');
@@ -46,8 +51,20 @@ class Index
             Logger::getInstance()->info('start');
 
             // 加载api类文件
-            self::loadApi($request, $response);
+            // self::loadApi($request, $response);
+            self::autoload();
+            $class = 'Api\\' . $api;
+            $api = new $class;
+            $api->process($request, $response);
 
+
+            /*if (!class_exists($api)) {
+                $response->httpStatus = HttpStatus::NOT_FOUND;
+                $response->httpStatusMsg = "API Not Found";
+            } else {
+                $api = new $api;
+                $api->process($request, $response);
+            }*/
         } catch (\Exception $e) {
             $response->httpStatus = HttpStatus::FAILED;
             $response->httpStatusMsg = $e->getMessage();
@@ -100,23 +117,52 @@ class Index
      * @param Response $response
      * 加载api类文件
      */
-    private static function loadApi(Request $request, Response $response): void
+    private static function loadApi(string $name): void
     {
-        $api = $request->api;
-
-        $fileName = 'Api/' . $api . '.php';
+        $fileName = TY_API . $name . '.php';
         if (file_exists($fileName)) {
-            require_once 'Api/' . $api . '.php';
+            require_once $fileName;
         }
+    }
 
-        if (!class_exists('Api\\' . $api)) {
-            $response->httpStatus = HttpStatus::NOT_FOUND;
-            $response->httpStatusMsg = "API Not Found";
-        } else {
-            $api = 'Api\\' . $api;
-            $api = new $api;
-            $api->process($request, $response);
+    private static function loadModel(string $name): void
+    {
+        $fileName = TY_MODEL . $name . '.php';
+        if (file_exists($fileName)) {
+            require_once $fileName;
         }
+    }
+
+    private static function setDIR(): void
+    {
+        define('TY_API', __DIR__ . '\\Api\\');
+        define('TY_MODEL', __DIR__ . '\\');
+        define('TY_CONF', __DIR__ . '\\');
+        define('TY_LOG', __DIR__ . '\\');
+        define('TY_CORE', __DIR__ . '\\');
+
+    }
+
+    private static function loadLog(string $name): void
+    {
+        $fileName = TY_LOG . $name . '.inc';
+        if (file_exists($fileName)) {
+            require_once $fileName;
+        }
+    }
+
+    private static function loadCore(string $name): void
+    {
+        $fileName = TY_CORE . $name . '.php';
+        if (file_exists($fileName)) {
+            require_once $fileName;
+        }
+    }
+
+    private static function autoload(): void
+    {
+        spl_autoload_register('self::loadModel');
+        spl_autoload_register('self::loadApi');
     }
 }
 

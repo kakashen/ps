@@ -1,7 +1,7 @@
 <?php
 
 namespace Log;
-use Request;
+use Core\Request;
 
 abstract class Logger {
   const ALL = 0;
