@@ -44,7 +44,7 @@ class Index
             $api->process($request, $response);
         } catch (Exception $e) {
             $response->httpStatus = HttpStatus::FAILED;
-            $response->httpStatusMsg = $e->getMessage();
+            $response->httpStatusMsg = 'PHP Run Error';
 
             Logger::getInstance()->fatal("500 PHP Run Error", $e);
         }
