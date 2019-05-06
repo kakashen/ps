@@ -29,19 +29,6 @@ class BaseResponseErrorData extends BaseResponseData
     }
 }
 
-class BaseResponseLoginData extends BaseResponseData
-{
-    public $uid;
-    public $token;
-
-    function __construct(string $uid, string $token)
-    {
-        parent::__construct();
-        $this->uid = $uid;
-        $this->token = $token;
-    }
-}
-
 abstract class BaseAPI extends JsonAPI
 {
     protected function beforeRun(Request $request, Response $response): bool
