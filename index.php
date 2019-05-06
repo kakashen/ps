@@ -104,7 +104,10 @@ class Index
     {
         $api = $request->api;
 
-        require_once 'Api/' . $api . '.php';
+        $fileName = 'Api/' . $api . '.php';
+        if (file_exists($fileName)) {
+            require_once 'Api/' . $api . '.php';
+        }
 
         if (!class_exists('Api\\' . $api)) {
             $response->httpStatus = HttpStatus::NOT_FOUND;
