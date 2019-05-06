@@ -43,17 +43,11 @@ class Index
             $request->data = file_get_contents('php://input');
             $request->httpHeaders = $_SERVER;
 
-            require_once 'Api/' . $api . '.php';
-            Logger::getInstance()->info("start");
+            Logger::getInstance()->info('start');
 
-            if (!class_exists('Api\\' . $api)) {
-                $response->httpStatus = HttpStatus::NOT_FOUND;
-                $response->httpStatusMsg = "API Not Found";
-            } else {
-                $api = 'Api\\' . $api;
-                $api = new $api;
-                $api->process($request, $response);
-            }
+            // 加载api类文件
+            self::loadApi($request, $response);
+
         } catch (\Exception $e) {
             $response->httpStatus = HttpStatus::FAILED;
             $response->httpStatusMsg = $e->getMessage();
@@ -98,6 +92,27 @@ class Index
         if ($errorLog === '' || $errorLog === false) {
             $log = 'Log\\ty-' . date('Y-m-d') . '.log';
             ini_set('error_log', $log);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     * 加载api类文件
+     */
+    private static function loadApi(Request $request, Response $response): void
+    {
+        $api = $request->api;
+
+        require_once 'Api/' . $api . '.php';
+
+        if (!class_exists('Api\\' . $api)) {
+            $response->httpStatus = HttpStatus::NOT_FOUND;
+            $response->httpStatusMsg = "API Not Found";
+        } else {
+            $api = 'Api\\' . $api;
+            $api = new $api;
+            $api->process($request, $response);
         }
     }
 }
