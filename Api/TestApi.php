@@ -2,25 +2,22 @@
 
 namespace Api;
 
-use API;
-use Request;
-use RequestData;
-use Response;
-use ResponseData;
 
-require_once 'Common.php';
+use Core\Request;
+use Core\Response;
 
-class TestApiRequest extends RequestData
+
+class TestApiRequest extends BaseRequestData
 {
     public $id;
 }
 
-class TestApiResponse extends ResponseData
+class TestApiResponse extends BaseResponseData
 {
     public $data;
 }
 
-class TestApi extends API
+class TestApi extends BaseAPI
 {
     protected function run(Request $request, Response $response)
     {
