@@ -6,6 +6,7 @@ class CommodityClass extends MysqlDB
 {
     private $tableName = 'os_commodityclass';
     private $id;
+    const ccIndex = 'ccIndex';
 
     function __construct(string $id = null)
     {
@@ -15,6 +16,6 @@ class CommodityClass extends MysqlDB
 
     public function findOne(): array
     {
-        return $this->find($this->tableName, $this->id);
+        return $this->find($this->tableName, [self::ccIndex => $this->id]);
     }
 }
