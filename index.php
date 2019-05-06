@@ -6,6 +6,7 @@ use Core\Response;
 use Log\Log4php;
 use Log\Logger;
 
+define('APP', __DIR__ . '\\');
 
 class Index
 {
@@ -13,7 +14,8 @@ class Index
     {
         // 自动加载类文件
         self::autoload();
-
+        // 加载配置文件
+        self::loadConfig();
         $response = new Response();
         unset($response->data);
         try {
@@ -92,69 +94,25 @@ class Index
     }
 
     /**
-     * 加载api类文件
-     */
-    private static function loadApi(string $name): void
-    {
-        $fileName = TY_API . basename($name) . '.php';
-        if (file_exists($fileName)) {
-            require_once $fileName;
-        }
-    }
-
-    /**
-     * 加载 model 类文件
-     */
-    private static function loadModel(string $name): void
-    {
-        $fileName = TY_MODEL . basename($name) . '.php';
-        if (file_exists($fileName)) {
-            require_once $fileName;
-        }
-    }
-
-    /**
-     * 设置目录常量
-     */
-    private static function setDIR(): void
-    {
-        define('TY_API', __DIR__ . '\\Api\\');
-        define('TY_MODEL', __DIR__ . '\\Model\\');
-        define('TY_CONF', __DIR__ . '\\Config\\');
-        define('TY_LOG', __DIR__ . '\\Log\\');
-        define('TY_CORE', __DIR__ . '\\Core\\');
-    }
-
-    /**
      * @param string $name
-     * 自动加载日志
+     * 自动加载
      */
-    private static function loadLog(string $name): void
+    private static function load(string $name): void
     {
-        $fileName = TY_LOG . basename($name) . '.inc';
+        // $fileName = TY_LOG . basename($name) . '.inc';
+        $fileName = APP . $name . '.php';
         if (file_exists($fileName)) {
             require_once $fileName;
         }
     }
 
-    /**
-     * @param string $name
-     * 自动加载核心类文件
-     */
-    private static function loadCore(string $name): void
-    {
-        $fileName = TY_CORE . basename($name) . '.php';
-        if (file_exists($fileName)) {
-            require_once $fileName;
-        }
-    }
 
     /**
-     * 自动加载 config
+     * 加载 config
      */
-    private static function loadConfig()
+    private static function loadConfig(): void
     {
-        $fileName = TY_CONF . 'Config' . '.php';
+        $fileName = APP . 'Config\\Config' . '.php';
         if (file_exists($fileName)) {
             require_once $fileName;
         }
@@ -169,19 +127,8 @@ class Index
         self::setTimezone();
         // 设置错误日志
         self::setErrorLog();
-        // 设置目录常量
-        self::setDIR();
-        // 自动加载日志
-        spl_autoload_register('self::loadLog');
-        // 自动加载核心类文件
-        spl_autoload_register('self::loadCore');
-        // 自动加载model
-        spl_autoload_register('self::loadModel');
-        // 自动加载api
-        spl_autoload_register('self::loadApi');
-        // 自动加载 config
-        spl_autoload_register('self::loadConfig');
-
+        // 自动加载
+        spl_autoload_register('self::load');
     }
 }
 
