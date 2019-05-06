@@ -448,7 +448,7 @@ class MysqlDB {
             }
             $this->queryBeginTime = microtime(true);
             $trace = $this::getExternalCaller();
-            Logger::getInstance()->error($this->connectionCfg['dsn'].":".$trace['class'] . '::' . $trace['method'].":". $this->lastSql.":". $trace['file'] . ':' . $trace['line']);
+            Logger::getInstance()->info($this->connectionCfg['dsn'].":".$trace['class'] . '::' . $trace['method'].":". $this->lastSql.":". $trace['file'] . ':' . $trace['line']);
             $this->memoryUsageBeforeFetch = memory_get_usage();
             try {// 连接池在查询失败时也会抛异常,而pdo在默认情况下会返回false.
                 $this->lastStmt = $this->connection->query($this->lastSql);
